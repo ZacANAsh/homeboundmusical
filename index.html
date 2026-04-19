@@ -735,11 +735,20 @@
     async function submitToKit(e) {
       e.preventDefault();
       const email = document.getElementById('kit-email').value.trim();
+      if (!email || !email.includes('@')) {
+        document.getElementById('kit-email').style.borderColor = 'rgba(220,60,60,0.7)';
+        return;
+      }
+      const btn = e.target.querySelector('button');
+      btn.textContent = '...';
+      btn.disabled = true;
       try {
-        await fetch('https://app.kit.com/forms/594f51dabd/subscriptions', {
+        const formData = new FormData();
+        formData.append('email_address', email);
+        await fetch('https://app.convertkit.com/forms/594f51dabd/subscriptions', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email_address: email })
+          body: formData,
+          mode: 'no-cors'
         });
       } catch(err) {}
       document.getElementById('kit-form').style.display = 'none';
